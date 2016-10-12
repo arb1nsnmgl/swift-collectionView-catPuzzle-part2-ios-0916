@@ -21,6 +21,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     var numberOfRows: CGFloat!
     var numberOfColumns: CGFloat!
     var imageSlices = [UIImage]()
+    var arranged = [UIImage]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,17 +31,21 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         generateImage()
         configureLayout()
         randomize()
-        
+        print("\n")
+        print(imageSlices)
     }
     
     func generateImage() {
         for i in 1...12 {
             imageSlices.append(UIImage(named: "\(i)")!)
         }
-     }
+        arranged = imageSlices
+        print(arranged)
+    }
     
     func randomize() {
         imageSlices = GKRandomSource.sharedRandom().arrayByShufflingObjects(in: imageSlices) as! [UIImage]
+        
     }
     
     func configureLayout() {
@@ -64,17 +69,30 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = self.collectionView?.dequeueReusableCell(withReuseIdentifier: "puzzleCell", for: indexPath) as! CollectionViewCell
-        
         cell.imageView.image = imageSlices[indexPath.row]
-        
         return cell
         
     }
     
     override func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         
-        //let cell = collectionView.cellForItem(at: sourceIndexPath) as! CollectionViewCell
+        footerReusableView.startTimer()
+        let removed = imageSlices.remove(at: sourceIndexPath.item)
+        imageSlices.insert(removed, at: destinationIndexPath.item)
         
+        if imageSlices == arranged {
+            let footer = footerReusableView
+            footer?.timer.invalidate()
+            performSegue(withIdentifier: "solvedSegue", sender: self)
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier != "solvedSegue" { return }
+        if let dest = segue.destination as? SolvedViewController {
+            dest.image = UIImage(named: "cats")
+            dest.time = footerReusableView.timerLabel.text
+        }
     }
     
     
@@ -91,7 +109,6 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
             footerReusableView = (self.collectionView?.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "footer", for: indexPath)) as! FooterReusableView
            
             footerReusableView.timerLabel.text = "00:00"
-            footerReusableView.startTimer()
             return footerReusableView
         }
         
