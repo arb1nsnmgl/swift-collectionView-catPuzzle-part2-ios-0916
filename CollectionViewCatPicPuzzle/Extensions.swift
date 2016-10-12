@@ -17,3 +17,4 @@ extension UIFont {
     class func helveticaNeueCondensedBold(size: CGFloat) -> UIFont { return UIFont(name: "HelveticaNeue-CondensedBold", size: size)! }
     
 }
+

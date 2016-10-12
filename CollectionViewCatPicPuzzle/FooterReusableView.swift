@@ -28,7 +28,7 @@ class FooterReusableView: UICollectionReusableView {
         
     }
     
-    private func configureView() {
+    func configureView() {
         
         timerLabel = UILabel()
         timerLabel.font = UIFont.helveticaNeueLight(size: 20)

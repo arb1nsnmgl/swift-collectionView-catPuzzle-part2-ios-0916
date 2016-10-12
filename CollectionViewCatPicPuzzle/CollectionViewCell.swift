@@ -10,7 +10,7 @@ import UIKit
 
 class CollectionViewCell: UICollectionViewCell {
     
-    var imageView: UIImageView!
+    var imageView: UIImageView! 
     
     override init(frame: CGRect) {
         super.init(frame: frame)
